@@ -51,6 +51,8 @@ class Report:
         return r
 
     def validate(self):
+        if self.doc.needsPass:
+            raise InvalidReport()
         if self.doc.metadata["creator"] != "Toolkit http://www.activepdf.com":
             raise InvalidReport()
 
