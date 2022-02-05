@@ -21,7 +21,6 @@ for member in KCcouncil:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
     for MECID in KCcouncil[member]:
-        MECIDpath = os.path.join("reports", MECID)
         lastreport = None
         scraper = Scraper(MECID)
         for row in scraper:
@@ -30,13 +29,13 @@ for member in KCcouncil:
                 or row["name"].upper() == "TERMINATION"
             ):
                 continue
-            yearpath = os.path.join(MECIDpath, str(row["year"]))
-            if not os.path.exists(yearpath):
-                os.makedirs(yearpath)
-            reportpath = os.path.join(yearpath, row["ID"])
+            dirpath = os.path.join("reports", MECID, str(row["year"]))
+            if not os.path.exists(dirpath):
+                os.makedirs(dirpath)
+            reportpath = os.path.join(dirpath, row["ID"])
+            print(reportpath)
             if os.path.isfile(reportpath):
                 report = Report.from_file(reportpath)
-                print(reportpath)
             else:
                 print(instructions.format(scraper.url, row["year"], row["ID"]))
                 for report in ReportWatcher("~/Downloads"):
