@@ -12,7 +12,6 @@ class Scraper:
         self.url = "{}?MECID={}".format(commiteeurl, mecid)
 
     def __iter__(self):
-        self.start()
         year = date.today().year
         while str(year) not in self.buttons:
             year -= 1
@@ -38,18 +37,29 @@ class Scraper:
                 yield row
             year -= 1
 
-    def start(self):
-        r = requests.get(self.url)
-        form = parse.getform(r.text)
-        form = {k: v for k, v in form.items() if k[:2] == "__"}
-        form[
-            "__EVENTTARGET"
-        ] = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$lbtnReports"
-        form["__EVENTARGUMENT"] = ""
-        form["ctl00$ctl00$txtUserName"] = ""
-        r = requests.post(self.url, data=form)
-        self.buttons = parse.getbuttons(r.text)
-        self.form = parse.getform(r.text)
+    def __getattr__(self, attr):
+        if attr == "info_page":
+            r = requests.get(self.url)
+            return r.text
+        if attr == "reports_page":
+            form = parse.getform(self.info_page)
+            form = {k: v for k, v in form.items() if k[:2] == "__"}
+            form[
+                "__EVENTTARGET"
+            ] = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$lbtnReports"
+            form["__EVENTARGUMENT"] = ""
+            form["ctl00$ctl00$txtUserName"] = ""
+            r = requests.post(self.url, data=form)
+            self.form = parse.getform(r.text)
+            self.buttons = parse.getbuttons(r.text)
+            return r.text
+        if attr == "buttons":
+            self.reports_page
+            return self.buttons
+        if attr == "form":
+            self.reports_page
+            return self.form
+        raise AttributeError
 
     def getrowsbyyear(self, year):
         year = str(year)
