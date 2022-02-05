@@ -24,8 +24,8 @@ class ReportWatcher:
                 if path not in sizes or sizes[path] != size:
                     sizes[path] = size
                     try:
-                        Report.from_file(path)
-                        yield path
+                        report = Report.from_file(path)
+                        yield report
                     except InvalidReport:
                         pass
             sleeptime = time.time() - lasttime

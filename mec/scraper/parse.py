@@ -41,7 +41,5 @@ def getrows(text: str) -> list:
             row["ID"] = _getbetween(row["ID"].split("<font")[1], ">", "</font")
         if "<u" in row["ID"]:
             row["ID"] = _getbetween(row["ID"].split("<u")[1], ">", "</u")
-        row["filename"] = "{} {}.pdf".format(row["date"], row["name"])
-        row["filename"] = row["filename"].replace("/", "-")
         rows.append(row)
     return rows

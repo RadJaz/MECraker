@@ -33,16 +33,15 @@ for member in KCcouncil:
             yearpath = os.path.join(MECIDpath, str(row["year"]))
             if not os.path.exists(yearpath):
                 os.makedirs(yearpath)
-            rowpath = os.path.join(yearpath, row["filename"])
-            print(rowpath)
-            if os.path.isfile(rowpath):
-                report = Report.from_file(rowpath)
+            reportpath = os.path.join(yearpath, row["ID"])
+            if os.path.isfile(reportpath):
+                report = Report.from_file(reportpath)
+                print(reportpath)
             else:
                 print(instructions.format(scraper.url, row["year"], row["ID"]))
-                for reportpath in ReportWatcher("~/Downloads"):
-                    report = Report.from_file(reportpath)
+                for report in ReportWatcher("~/Downloads"):
                     if report.MECID == MECID and report.matchesrow(row):
-                        os.rename(reportpath, rowpath)
+                        report.move(reportpath)
                         break
             if lastreport:
                 if lastreport.enddate < report.enddate:

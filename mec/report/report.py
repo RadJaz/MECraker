@@ -36,11 +36,17 @@ class Report:
         self.validate()
 
     @classmethod
-    def from_file(cls, filename: str):
-        with open(filename, "rb") as f:
+    def from_file(cls, path: str):
+        with open(path, "rb") as f:
             if f.read(4) != b"%PDF":
                 raise InvalidReport()
-            return cls.from_bytes(b"%PDF" + f.read())
+            obj = cls.from_bytes(b"%PDF" + f.read())
+            obj.path = path
+            return obj
+
+    def move_file(self, to_path: str):
+        os.rename(self.path, to_path)
+        self.path = to_path
 
     @classmethod
     def from_bytes(cls, bytes):
