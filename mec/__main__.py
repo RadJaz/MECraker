@@ -1,10 +1,6 @@
-from mec import Report, InvalidReport, Scraper, ReportWatcher, KCcouncil
-import sys
+from mec import Report, Scraper, ReportWatcher, KCcouncil
 import os
 import csv
-from datetime import timedelta
-
-commiteeurl = "https://mec.mo.gov/mec/Campaign_Finance/CommInfo.aspx"
 
 instructions = """PLEASE DO THE FOLLOWING:
 	1. Go to {}
