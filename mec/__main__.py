@@ -22,9 +22,9 @@ for member in KCcouncil:
         writer.writeheader()
     for MECID in KCcouncil[member]:
         MECIDpath = os.path.join("reports", MECID)
-        url = "{}?MECID={}".format(commiteeurl, MECID)
         lastreport = None
-        for row in Scraper(MECID):
+        scraper = Scraper(MECID)
+        for row in scraper:
             if (
                 "LIMITED ACTIVITY" in row["name"].upper()
                 or row["name"].upper() == "TERMINATION"
@@ -38,7 +38,7 @@ for member in KCcouncil:
             if os.path.isfile(rowpath):
                 report = Report.from_file(rowpath)
             else:
-                print(instructions.format(url, row["year"], row["ID"]))
+                print(instructions.format(scraper.url, row["year"], row["ID"]))
                 for reportpath in ReportWatcher("~/Downloads"):
                     report = Report.from_file(reportpath)
                     if report.MECID == MECID and report.matchesrow(row):
