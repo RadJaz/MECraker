@@ -45,7 +45,7 @@ class Report:
             obj.path = path
             return obj
 
-    def move_file(self, to_path: str):
+    def move(self, to_path: str):
         os.rename(self.path, to_path)
         self.path = to_path
 
