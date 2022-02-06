@@ -19,8 +19,8 @@ def run(MECIDs, csv_path, watch_path):
     if not os.path.exists(csv_path):
         os.makedirs(csv_path)
     for member in MECIDs:
-        memberpath = os.path.join(csv_path, member + ".csv")
-        with open(memberpath, "w") as outfile:
+        temppath = os.path.join(csv_path, ".temp.csv")
+        with open(temppath, "w") as outfile:
             writer = csv.DictWriter(outfile, fieldnames=fieldnames)
             writer.writeheader()
         for MECID in MECIDs[member]:
@@ -49,6 +49,8 @@ def run(MECIDs, csv_path, watch_path):
                     if lastreport.enddate < report.enddate:
                         raise Exception("out of order")
                 lastreport = report
-                with open(memberpath, "a") as outfile:
+                with open(temppath, "a") as outfile:
                     writer = csv.DictWriter(outfile, fieldnames=fieldnames)
                     writer.writerows(report.contributions)
+        memberpath = os.path.join(csv_path, member + ".csv")
+        os.rename(temppath, memberpath)
