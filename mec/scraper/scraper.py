@@ -2,7 +2,6 @@ import requests
 from . import parse as parse
 from datetime import date, datetime
 import time
-from pprint import pprint
 
 
 CommInfo = "https://mec.mo.gov/mec/Campaign_Finance/CommInfo.aspx"

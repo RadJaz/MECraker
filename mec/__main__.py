@@ -14,6 +14,7 @@ def main():
         "--watch-path", type=dir_path, default=os.path.join(Path.home(), "Downloads")
     )
     run.add_argument("--csv-path", type=str, default="csvs")
+    run.add_argument("--reports-path", type=str, default="reports")
 
     reference = subparser.add_parser("ref")
     reference.add_argument("type", choices=["seqno", "fields"])
@@ -23,7 +24,12 @@ def main():
     args = parser.parse_args()
 
     if args.command == "run":
-        mec.run(MECIDs=args.mecids, csv_path=args.csv_path, watch_path=args.watch_path)
+        mec.run(
+            MECIDs=args.mecids,
+            csv_path=args.csv_path,
+            watch_path=args.watch_path,
+            reports_path=args.reports_path,
+        )
     elif args.command == "ref":
         if not args.out_file:
             args.out_file = args.type + ".pdf"

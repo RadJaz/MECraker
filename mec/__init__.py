@@ -12,7 +12,7 @@ instructions = """PLEASE DO THE FOLLOWING:
 fieldnames = ["name", "address", "employer", "amount", "date", "agg"]
 
 
-def run(MECIDs, csv_path, watch_path):
+def run(MECIDs, csv_path, watch_path, reports_path):
     import os
     import csv
 
@@ -32,7 +32,7 @@ def run(MECIDs, csv_path, watch_path):
                     or row["name"].upper() == "TERMINATION"
                 ):
                     continue
-                dirpath = os.path.join("reports", MECID, str(row["year"]))
+                dirpath = os.path.join(reports_path, MECID, str(row["year"]))
                 if not os.path.exists(dirpath):
                     os.makedirs(dirpath)
                 reportpath = os.path.join(dirpath, row["ID"])
