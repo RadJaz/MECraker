@@ -5,7 +5,7 @@ MECraker is a set of python tools for collecting campaign finance data from the 
 ## Dependencies
 
 - Python 3
-- MuPDF
+- [MuPDF](https://mupdf.com/releases/index.html)
 
 ### PIP module dependecies
 
