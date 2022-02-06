@@ -1,8 +1,9 @@
-from .templates import templates, checkbox_templates
+# import templates
 from .utils import *
 import fitz
 import os
 from datetime import datetime, timedelta
+from .page_mods import *
 
 reporttypes = [
     "15 DAYS AFTER CAUCUS NOMINATION",
@@ -88,7 +89,6 @@ class Report:
             self.AMENDED = self["cover"]["AMMENDING PREVIOUS REPORT DATED"]
             return self.AMENDED
         if attr == "quarter":
-            data = self["cover"].parse()
             quarters = [
                 self["cover"][q] for q in ["Jan 15", "Apr 15", "Jul 15", "Oct 15"]
             ]
@@ -104,7 +104,7 @@ class Report:
             return self.MECID
         if attr == "contributions":
             contributions = []
-            for page in self["c/l"]:
+            for page in self["cl"]:
                 for row in "abcde":
                     contribution = {
                         "name": "",
@@ -216,38 +216,4 @@ class InvalidReport(Exception):
         return "The Report could not be created because an invalid pdf was used."
 
 
-def parsepage(page: fitz.Page):
-    try:
-        return page.data
-    except:
-        pass
-    template = templates[page.type]
-    checkbox_template = checkbox_templates[page.type]
-    checkmarks, input, _ = page.get_spans()
-    data = {label: "" for label, _ in template.items()}
-    data.update({label: False for label, _ in checkbox_template.items()})
-    for label, rect in template.items():
-        for span in input:
-            if rect.contains(get_center(span["bbox"])):
-                if data[label]:
-                    data[label] += "\n"
-                data[label] += span["text"]
-    for label, rect in checkbox_template.items():
-        for span in checkmarks:
-            if rect.contains(get_center(span["bbox"])):
-                data[label] = True
-    page.data = data
-
-
-def page_getitem(page, item):
-    try:
-        return page.data[item]
-    except:
-        page.parse()
-    return page.data[item]
-
-
-fitz.Page.parse = parsepage
-fitz.Page.__getitem__ = page_getitem
-fitz.Page.get_spans = get_spans
 fitz.Document.better_toc = better_toc
