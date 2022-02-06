@@ -44,3 +44,24 @@ def getrows(text: str) -> list:
             row["ID"] = _getbetween(row["ID"].split("<u")[1], ">", "</u")
         rows.append(row)
     return rows
+
+
+def search(text: str) -> list:
+    table = text.split("<tr bgcolor=")[2:]
+    table = [_getbetween(row, ">", "</tr>") for row in table]
+    table = [
+        [cell.split("</td>")[0] for cell in row.split("<td>")[1:]] for row in table
+    ]
+    for row in range(len(table)):
+        for cell in range(len(table[row])):
+            open = 0
+            s = ""
+            for char in table[row][cell]:
+                if char == "<":
+                    open += 1
+                elif char == ">":
+                    open -= 1
+                elif not open:
+                    s += char
+            table[row][cell] = s.strip()
+    return table

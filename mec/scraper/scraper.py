@@ -13,9 +13,9 @@ prefix = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$"
 
 class Scraper:
     def submit_form(self, button="", form={}):
-        if button:
-            self.form["__EVENTTARGET"] = prefix + "lbtn" + button
         form = {prefix + k.replace(prefix, ""): v for k, v in form.items()}
+        if button:
+            form["__EVENTTARGET"] = prefix + "lbtn" + button
         form = self.form | form
         self.text = requests.post(self.url, data=form).text
         self.form = parse.getform(self.text)
@@ -23,13 +23,38 @@ class Scraper:
 
     def __getattr__(self, attr):
         if attr == "form":
-            self.form = parse.getform(requests.get(self.url).text)
+            self.text = requests.get(self.url).text
+            self.form = parse.getform(self.text)
             return self.form
 
 
 class SearchScraper(Scraper):
     def __init__(self):
         self.url = CFSearch
+        self.form
+
+    def active(self):
+        self.submit_form(button="Type")
+        text = self.submit_form(
+            form={"ddType": "Select+All", "ddStatus": "Active", "btnSearch": "Search"}
+        )
+        with open("temp.html", "w") as f:
+            f.write(self.text)
+        return parse.search(self.text)
+
+    def terminated(self):
+        self.submit_form(button="Type")
+        text = self.submit_form(
+            form={
+                "ddType": "Select+All",
+                "ddStatus": "Terminated",
+                "btnSearch": "Search",
+            }
+        )
+        return parse.search(self.text)
+
+    def all(self):
+        return self.active() + self.terminated()
 
 
 class MECIDScraper(Scraper):
