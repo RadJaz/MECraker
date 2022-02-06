@@ -1,5 +1,5 @@
 from .report import Report, InvalidReport
-from .scraper import Scraper
+from .scraper import MECIDScraper, SearchScraper
 from .watcher import ReportWatcher
 from .mecids import *
 
@@ -25,7 +25,7 @@ def run(MECIDs, csv_path, watch_path):
             writer.writeheader()
         for MECID in MECIDs[member]:
             lastreport = None
-            scraper = Scraper(MECID)
+            scraper = MECIDScraper(MECID)
             for row in scraper:
                 if (
                     "LIMITED ACTIVITY" in row["name"].upper()

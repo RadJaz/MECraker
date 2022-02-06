@@ -2,70 +2,63 @@ import requests
 from . import parse as parse
 from datetime import date, datetime
 import time
+from pprint import pprint
 
 
-commiteeurl = "https://mec.mo.gov/mec/Campaign_Finance/CommInfo.aspx"
+CommInfo = "https://mec.mo.gov/mec/Campaign_Finance/CommInfo.aspx"
+CFSearch = "https://mec.mo.gov/mec/Campaign_Finance/CFSearch.aspx"
+
+
+prefix = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$"
 
 
 class Scraper:
-    def __init__(self, mecid):
-        self.url = "{}?MECID={}".format(commiteeurl, mecid)
-
-    def __iter__(self):
-        year = date.today().year
-        while str(year) not in self.buttons:
-            year -= 1
-        while True:
-            if year < 2011:
-                break
-            if str(year) not in self.buttons:
-                break
-            rows = self.getrowsbyyear(year)
-            # remove any redundant rows
-            unique = {}
-            for row in reversed(rows):
-                name = row["name"].replace("AMENDED ", "")
-                if name not in unique or datetime.strptime(
-                    row["date"], "%m/%d/%Y"
-                ) >= datetime.strptime(unique[name]["date"], "%m/%d/%Y"):
-                    unique[name] = row
-            rows = list(reversed(unique.values()))
-            for row in range(len(rows)):
-                rows[row]["year"] = year
-            del unique
-            for row in rows:
-                yield row
-            year -= 1
+    def submit_form(self, button="", form={}):
+        if button:
+            self.form["__EVENTTARGET"] = prefix + "lbtn" + button
+        form = {prefix + k.replace(prefix, ""): v for k, v in form.items()}
+        form = self.form | form
+        self.text = requests.post(self.url, data=form).text
+        self.form = parse.getform(self.text)
+        return self.text
 
     def __getattr__(self, attr):
-        if attr == "info_page":
-            r = requests.get(self.url)
-            return r.text
-        if attr == "reports_page":
-            form = parse.getform(self.info_page)
-            form = {k: v for k, v in form.items() if k[:2] == "__"}
-            form[
-                "__EVENTTARGET"
-            ] = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$lbtnReports"
-            form["__EVENTARGUMENT"] = ""
-            form["ctl00$ctl00$txtUserName"] = ""
-            r = requests.post(self.url, data=form)
-            self.form = parse.getform(r.text)
-            self.buttons = parse.getbuttons(r.text)
-            return r.text
-        if attr == "buttons":
-            self.reports_page
-            return self.buttons
         if attr == "form":
-            self.reports_page
+            self.form = parse.getform(requests.get(self.url).text)
             return self.form
-        raise AttributeError
 
-    def getrowsbyyear(self, year):
-        year = str(year)
-        self.form[self.buttons[year] + ".x"] = 1
-        self.form[self.buttons[year] + ".y"] = 1
-        r = requests.post(self.url, data=self.form)
-        self.buttons = parse.getbuttons(r.text)
-        self.form = parse.getform(r.text)
-        return parse.getrows(r.text)
+
+class SearchScraper(Scraper):
+    def __init__(self):
+        self.url = CFSearch
+
+
+class MECIDScraper(Scraper):
+    def __init__(self, mecid):
+        self.url = "{}?MECID={}".format(CommInfo, mecid)
+
+    def __iter__(self):
+        self.submit_form(button="Reports")
+        for year in self.year_generator():
+            if year < 2011:
+                break
+            rows = parse.getrows(self.text)
+            # remove any redundant rows
+            unique_rows = {}
+            for row in reversed(rows):
+                name = row["name"].replace("AMENDED ", "")
+                if name not in unique_rows or datetime.strptime(
+                    row["date"], "%m/%d/%Y"
+                ) >= datetime.strptime(unique_rows[name]["date"], "%m/%d/%Y"):
+                    row["year"] = year
+                    unique_rows[name] = row
+            unique_rows = list(reversed(unique_rows.values()))
+            for row in unique_rows:
+                yield row
+
+    def year_generator(self):
+        year_buttons = parse.get_year_buttons(self.text)
+        for year, year_button in year_buttons.items():
+            form = {year_button + ".x": 1, year_button + ".y": 1}
+            self.submit_form(form=form)
+            yield year

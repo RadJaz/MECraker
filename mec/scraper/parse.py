@@ -11,18 +11,19 @@ def getform(text: str) -> dict:
         id = _getbetween(input, 'id="', '"')
         value = _getbetween(input, 'value="', '"')
         newform[id] = value
+    newform = {k: v for k, v in newform.items() if k[:2] == "__"}
     newform["__EVENTTARGET"] = ""
     newform["__EVENTARGUMENT"] = ""
     newform["ctl00$ctl00$txtUserName"] = ""
     return newform
 
 
-def getbuttons(text: str) -> dict:
+def get_year_buttons(text: str) -> dict:
     tables = text.split('<table id="tablescroll"')[1:]
     tables = [_getbetween(table, ">", "</table>") for table in tables]
     buttons = {}
     for table in tables:
-        year = _getbetween(table, "<span", "</span>")[-4:]
+        year = int(_getbetween(table, "<span", "</span>")[-4:])
         button = _getbetween(table, '<input type="image" name="', '"')
         buttons[year] = button
     return buttons
