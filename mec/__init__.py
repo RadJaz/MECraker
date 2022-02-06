@@ -12,14 +12,14 @@ instructions = """PLEASE DO THE FOLLOWING:
 fieldnames = ["name", "address", "employer", "amount", "date", "agg"]
 
 
-def main(MECIDs):
+def run(MECIDs, csv_path, watch_path):
     import os
     import csv
 
+    if not os.path.exists(csv_path):
+        os.makedirs(csv_path)
     for member in MECIDs:
-        memberpath = os.path.join("csvs", member + ".csv")
-        if not os.path.exists("csvs"):
-            os.makedirs("csvs")
+        memberpath = os.path.join(csv_path, member + ".csv")
         with open(memberpath, "w") as outfile:
             writer = csv.DictWriter(outfile, fieldnames=fieldnames)
             writer.writeheader()
@@ -41,7 +41,7 @@ def main(MECIDs):
                     report = Report.from_file(reportpath)
                 else:
                     print(instructions.format(scraper.url, row["year"], row["ID"]))
-                    for report in ReportWatcher("~/Downloads"):
+                    for report in ReportWatcher(watch_path):
                         if report.MECID == MECID and report.matchesrow(row):
                             report.move(reportpath)
                             break
