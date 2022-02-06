@@ -10,7 +10,7 @@ MECraker is a set of python tools for collecting campaign finance data from the 
 ### PIP module dependecies
 
 - requests
-- pymupdf
+- PyMuPDF
 
 ## Use
 
