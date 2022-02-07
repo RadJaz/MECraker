@@ -158,6 +158,86 @@ class Report:
                     contributions.append(contribution)
             self.contributions = contributions
             return self.contributions
+        if attr == "expenditures":
+            expenditures = []
+            for page in self["100+"]:
+                for row in range(1, 16):
+                    row = str(row)
+                    expenditure = {
+                        "name": "",
+                        "address": "",
+                        "date": "",
+                        "purpose": "",
+                        "amount": 0.0,
+                        "paid": False,
+                    }
+                    col_d = page[row + "d"]
+                    if not col_d:
+                        continue
+                    expenditure["amount"] = float(col_d.replace(",", ""))
+                    expenditure["name"], expenditure["address"] = page[row + "a"].split(
+                        "\n", 1
+                    )
+                    expenditure["date"] = page[row + "b"]
+                    expenditure["purpose"] = page[row + "c"]
+                    if page[row + " PAID"] == page[row + " INCURRED"]:
+                        raise Exception("Can't detemine if expense was paid.")
+                    if page[row + " PAID"]:
+                        expenditure["paid"] = True
+                    expenditures.append(expenditure)
+            for page in self["<100"]:
+                for row in range(1, 23):
+                    row = str(row)
+                    if not page[row + "b"]:
+                        continue
+                    expenditure = {
+                        "name": "",
+                        "address": "",
+                        "date": "",
+                        "purpose": "",
+                        "amount": 0.0,
+                        "paid": True,
+                    }
+                    expenditure["purpose"] = page[row + "a"]
+                    expenditure["amount"] = float(page[row + "b"].replace(",", ""))
+                    expenditures.append(expenditure)
+            for page in self["ec"]:
+                for row in "ab":
+                    if not page["4" + row]:
+                        continue
+                    expenditure = {
+                        "name": "",
+                        "address": "",
+                        "date": "",
+                        "purpose": "",
+                        "amount": 0.0,
+                        "paid": True,
+                    }
+                    expenditure["purpose"] = page["3" + row]
+                    expenditure["amount"] = float(page["4" + row].replace(",", ""))
+                    expenditures.append(expenditure)
+                for row in "abc":
+                    expenditure = {
+                        "name": "",
+                        "address": "",
+                        "date": "",
+                        "purpose": "",
+                        "amount": 0.0,
+                        "paid": True,
+                    }
+                    col11 = page["11" + row]
+                    if not col11:
+                        continue
+                    expenditure["amount"] = float(col11.replace(",", ""))
+                    expenditure["name"], expenditure["address"] = page["8" + row].split(
+                        "\n", 1
+                    )
+                    expenditure["date"] = page["9" + row]
+                    expenditure["purpose"] = page["10" + row]
+                    expenditures.append(expenditure)
+
+            self.expenditures = expenditures
+            return self.expenditures
         if attr == "startdate" or attr == "enddate":
             lines = self["cover"]["13"].splitlines()
             self.startdate = datetime.strptime(lines[0], "%m/%d/%Y")
