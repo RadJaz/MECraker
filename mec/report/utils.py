@@ -8,13 +8,7 @@ pagenames = {
     "REPORT SUMMARY": "summary",
     "EXPLANATION FOR AMENDED REPORT": "explanation",
     "ADDENDUM STATEMENT": "addendum",
-    "INDEPENDENT CONTRACTOR EXPENDITURE": "contractor",
-    "DIRECT EXPENDITURE REPORT": "direct",
-    "SUPPLEMENTAL LOAN INFORMATION": "supplemental",
     "FUND-RAISING STATEMENT": "fundraising",
-    "CONTRIBUTIONS MADE - SUPPLEMENTAL FORM": "",
-    "CONTRACTUAL RELATIONSHIP REPORT": "",
-    "COMMITTEE TERMINATION STATEMENT": "",
 }
 
 
@@ -96,6 +90,7 @@ def better_toc(doc):
             if "Bold" in span["font"] and span["text"][0] != " ":
                 pagetitle = span["text"]
                 break
-        toc[pagenames[pagetitle]].append(page.number)
+        if pagetitle in pagenames:
+            toc[pagenames[pagetitle]].append(page.number)
     doc.toc = toc
     return doc.toc
