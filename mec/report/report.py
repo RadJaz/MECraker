@@ -79,6 +79,8 @@ class Report:
         if attr == "type":
             cover = self["cover"]
             types = [type for type in reporttypes if cover[type] == True]
+            if "TERMINATION" in types:
+                types.remove("TERMINATION")
             if len(types) == 0:
                 raise Exception("No type found")
             if len(types) > 1:

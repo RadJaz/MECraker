@@ -29,7 +29,7 @@ def run(MECIDs, csv_path, watch_path, reports_path):
             for row in scraper:
                 if (
                     "LIMITED ACTIVITY" in row["name"].upper()
-                    or row["name"].upper() == "TERMINATION"
+                    or row["name"].upper().replace("AMENDED ", "") == "TERMINATION"
                 ):
                     continue
                 dirpath = os.path.join(reports_path, MECID, str(row["year"]))
@@ -46,7 +46,10 @@ def run(MECIDs, csv_path, watch_path, reports_path):
                             report.move(reportpath)
                             break
                 if lastreport:
-                    if lastreport.enddate < report.enddate:
+                    if (
+                        lastreport.enddate < report.enddate
+                        and report.MECID != "C180729"
+                    ):
                         raise Exception("out of order")
                 lastreport = report
                 with open(temppath, "a") as outfile:
