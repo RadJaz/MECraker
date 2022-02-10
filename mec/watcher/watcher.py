@@ -20,6 +20,8 @@ class ReportWatcher:
             for path in paths:
                 if os.path.isdir(path):
                     continue
+                if path.endswith(".crdownload"):
+                    continue
                 size = os.path.getsize(path)
                 if path not in sizes or sizes[path] != size:
                     sizes[path] = size
