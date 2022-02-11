@@ -1,4 +1,3 @@
-# import templates
 from .utils import *
 import fitz
 import os
@@ -109,9 +108,12 @@ class Report:
             for page in self["cl"]:
                 for row in "abcde":
                     contribution = {
-                        "name": "",
+                        "candidate": self["cover"]["14"].splitlines()[0],
+                        "election": self["cover"]["11"],
+                        "donor": "",
                         "address": "",
                         "employer": "",
+                        "title": "",
                         "amount": 0.0,
                         "date": "",
                         "agg": 0.0,
@@ -127,17 +129,24 @@ class Report:
                         elif "." in line:
                             contribution["agg"] = float(line.replace(",", ""))
                     col3lines = page["3" + row].splitlines()
-                    contribution["name"] = col3lines[0]
+                    contribution["donor"] = col3lines[0]
                     contribution["address"] = " ".join(col3lines[1:3])
                     if len(col3lines) > 3:
-                        contribution["employer"] = " ".join(col3lines[3:])
+                        contribution["title"] = " ".join(col3lines[3:])
+                    if " -- " in contribution["title"]:
+                        contribution["employer"], contribution["title"] = contribution[
+                            "title"
+                        ].split(" -- ")
                     contributions.append(contribution)
             for page in self["contributions"]:
                 for row in "abcdefgh":
                     contribution = {
-                        "name": "",
+                        "candidate": self["cover"]["14"].splitlines()[0],
+                        "election": self["cover"]["11"],
+                        "donor": "",
                         "address": "",
                         "employer": "",
+                        "title": "",
                         "amount": 0.0,
                         "date": "",
                         "agg": 0.0,
@@ -153,10 +162,14 @@ class Report:
                         elif "." in line:
                             contribution["agg"] = float(line.replace(",", ""))
                     col3lines = page["3" + row].splitlines()
-                    contribution["name"] = col3lines[0]
+                    contribution["donor"] = col3lines[0]
                     contribution["address"] = " ".join(col3lines[1:3])
                     if len(col3lines) > 3:
-                        contribution["employer"] = " ".join(col3lines[3:])
+                        contribution["title"] = " ".join(col3lines[3:])
+                    if " -- " in contribution["title"]:
+                        contribution["employer"], contribution["title"] = contribution[
+                            "title"
+                        ].split(" -- ")
                     contributions.append(contribution)
             self.contributions = contributions
             return self.contributions
@@ -166,6 +179,7 @@ class Report:
                 for row in range(1, 16):
                     row = str(row)
                     expenditure = {
+                        "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
                         "date": "",
@@ -193,6 +207,7 @@ class Report:
                     if not page[row + "b"]:
                         continue
                     expenditure = {
+                        "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
                         "date": "",
@@ -208,6 +223,7 @@ class Report:
                     if not page["4" + row]:
                         continue
                     expenditure = {
+                        "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
                         "date": "",
@@ -220,6 +236,7 @@ class Report:
                     expenditures.append(expenditure)
                 for row in "abc":
                     expenditure = {
+                        "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
                         "date": "",

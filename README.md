@@ -2,7 +2,7 @@
 
 MECraker is a set of python tools for collecting campaign finance data from the Missouri Ethics Commision website.
 
-As a program, MECraker can compile donation records and place the records in a spreadsheet for further analysis.
+As a program, MECraker can compile donation and expense records and place the records in a spreadsheet for further analysis.
 
 As a library, MECraker can be used to easily parse documents filed with the MEC.
 

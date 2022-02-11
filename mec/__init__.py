@@ -9,7 +9,18 @@ instructions = """PLEASE DO THE FOLLOWING:
 	2. Click the year {}
 	3. Click the link that says {}
 	4. Download the PDF"""
-fieldnames = ["name", "address", "employer", "amount", "date", "agg"]
+c_fields = [
+    "candidate",
+    "election",
+    "donor",
+    "address",
+    "employer",
+    "title",
+    "amount",
+    "date",
+    "agg",
+]
+e_fields = ["candidate", "name", "address", "date", "purpose", "amount", "paid"]
 
 
 def run(MECIDs, csv_path, watch_path, reports_path):
@@ -18,11 +29,15 @@ def run(MECIDs, csv_path, watch_path, reports_path):
 
     if not os.path.exists(csv_path):
         os.makedirs(csv_path)
+    c_path = os.path.join(csv_path, ".contributions.tmp")
+    e_path = os.path.join(csv_path, ".expenditures.tmp")
+    with open(c_path, "w") as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=c_fields)
+        writer.writeheader()
+    with open(e_path, "w") as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=e_fields)
+        writer.writeheader()
     for member in MECIDs:
-        temppath = os.path.join(csv_path, ".temp.csv")
-        with open(temppath, "w") as outfile:
-            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-            writer.writeheader()
         for MECID in MECIDs[member]:
             lastreport = None
             scraper = MECIDScraper(MECID)
@@ -46,14 +61,17 @@ def run(MECIDs, csv_path, watch_path, reports_path):
                             report.move(reportpath)
                             break
                 if lastreport:
-                    if (
-                        lastreport.enddate < report.enddate
-                        and report.MECID != "C180729"
-                    ):
+                    if lastreport.enddate < report.enddate and report.MECID not in [
+                        "C180729",
+                        "C190775",
+                    ]:
                         raise Exception("out of order")
                 lastreport = report
-                with open(temppath, "a") as outfile:
-                    writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+                with open(c_path, "a") as outfile:
+                    writer = csv.DictWriter(outfile, fieldnames=c_fields)
                     writer.writerows(report.contributions)
-        memberpath = os.path.join(csv_path, member + ".csv")
-        os.rename(temppath, memberpath)
+                with open(e_path, "a") as outfile:
+                    writer = csv.DictWriter(outfile, fieldnames=e_fields)
+                    writer.writerows(report.expenditures)
+    os.rename(c_path, os.path.join(csv_path, "contributions.csv"))
+    os.rename(e_path, os.path.join(csv_path, "expenditures.csv"))
