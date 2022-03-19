@@ -9,7 +9,7 @@ def main():
     subparser = parser.add_subparsers(dest="command", required=True)
 
     run = subparser.add_parser("run")
-    run.add_argument("--mecids", type=str, default=mec.KCcouncil)
+    run.add_argument("--mecids", nargs="+", default=mec.KC2019)
     run.add_argument(
         "--watch-path", type=dir_path, default=os.path.join(Path.home(), "Downloads")
     )
@@ -22,7 +22,6 @@ def main():
     reference.add_argument("--out-file", type=str)
 
     args = parser.parse_args()
-
     if args.command == "run":
         mec.run(
             MECIDs=args.mecids,
