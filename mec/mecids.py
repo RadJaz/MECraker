@@ -43,6 +43,7 @@ losers = [
     "C171009",  # PAT CLARKE
     "C141563", "C180677",  # RACHEL RILEY
 ]
+KC2019 = KCcouncil + losers
 
 sgf = [
     "C141587", # Ken McClure
@@ -54,5 +55,3 @@ sgf = [
     "C041633", "C151032", # Mike Schilling
     "C180699", # Matthew Simpson
 ]
-
-KC2019 = KCcouncil + losers
