@@ -201,7 +201,7 @@ class Report:
                     if page[row + " PAID"]:
                         expenditure["paid"] = True
                     expenditures.append(expenditure)
-            for page in self["<100"]:
+            for page in self["under100"]:
                 for row in range(1, 23):
                     row = str(row)
                     if not page[row + "b"]:
