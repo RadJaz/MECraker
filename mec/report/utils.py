@@ -37,6 +37,7 @@ def sort_spans(spans):
         if span["text"] == "\x14":
             checkmarks.append(span)
         elif span["font"] == "Courier":
+            span["text"] = span["text"].replace("\ufffd", "")
             input.append(span)
         else:
             form.append(span)
