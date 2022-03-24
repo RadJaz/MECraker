@@ -72,5 +72,5 @@ def run(MECIDs, csv_path, watch_path, reports_path):
             with open(e_path, "a") as outfile:
                 writer = csv.DictWriter(outfile, fieldnames=e_fields)
                 writer.writerows(report.expenditures)
-    os.rename(c_path, os.path.join(csv_path, "contributions.csv"))
-    os.rename(e_path, os.path.join(csv_path, "expenditures.csv"))
+    os.replace(c_path, os.path.join(csv_path, "contributions.csv"))
+    os.replace(e_path, os.path.join(csv_path, "expenditures.csv"))
