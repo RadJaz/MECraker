@@ -2,9 +2,18 @@ import mec
 import argparse
 import os
 from pathlib import Path
-
+import sys
+import yaml
+from pprint import pprint, pformat
 
 def main():
+    if len(sys.argv) == 2 and os.path.exists(sys.argv[1]):
+        filename = sys.argv[1]
+        args = config(filename)
+    else: args = None
+    command(args)
+
+def command(args=None):
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers(dest="command", required=True)
 
@@ -17,11 +26,10 @@ def main():
     run.add_argument("--reports-path", type=str, default="reports")
 
     reference = subparser.add_parser("ref")
-    reference.add_argument("type", choices=["seqno", "fields"])
+    reference.add_argument("--type", choices=["seqno", "fields"])
     reference.add_argument("--in-file", type=file_path, required=True)
     reference.add_argument("--out-file", type=str)
-
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     if args.command == "run":
         mec.run(
             MECIDs=args.mecids,
@@ -36,6 +44,41 @@ def main():
             mec.report.reference.seqno(in_file=args.in_file, out_file=args.out_file)
         elif args.type == "fields":
             mec.report.reference.fields(in_file=args.in_file, out_file=args.out_file)
+
+def config(filename):
+    print("reading config {}".format(filename))
+    with open(filename) as f:
+        configs = list(yaml.safe_load_all(f.read()))
+    if len(configs) == 1:
+        config = configs[0]
+    else:
+        options = "Please pick a config:\n"
+        i = 0
+        for config in configs:
+            i += 1
+            options += "\n{}:\n{}\n".format(i, "\t" + pformat(config).replace("\n", "\n\t"))
+        print(options + "\n")
+        prompt = "Select an option (1-{}):".format(i)
+        while True:
+            selection = input(prompt)
+            try:
+                selection = int(selection)
+            except:
+                pass
+            if selection in range(1,i+1):
+                config = configs[selection-1]
+                break
+            print("Invalid selection. Try again.")
+    args = [config["command"]]
+    del config["command"]
+    for key, value in config.items():
+        if value == None: continue
+        if type(value) == list:
+            args.append("--" + key)
+            args += value
+            continue
+        args += ["--" + key, value]
+    return args
 
 
 def dir_path(s):
