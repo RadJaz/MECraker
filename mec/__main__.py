@@ -8,7 +8,9 @@ from pprint import pformat
 
 
 def main():
-    if len(sys.argv) == 2 and os.path.exists(sys.argv[1]):
+    if len(sys.argv) == 1 and os.path.exists("MECraker.yaml"):
+        args = config("MECraker.yaml")
+    elif len(sys.argv) == 2 and os.path.exists(sys.argv[1]):
         filename = sys.argv[1]
         args = config(filename)
     else:
@@ -21,7 +23,7 @@ def command(args=None):
     subparser = parser.add_subparsers(dest="command", required=True)
 
     run = subparser.add_parser("run")
-    run.add_argument("--mecids", nargs="+", default=mec.KC2019)
+    run.add_argument("--mecids", nargs="+", required=True)
     run.add_argument(
         "--watch-path", type=dir_path, default=os.path.join(Path.home(), "Downloads")
     )
@@ -32,9 +34,7 @@ def command(args=None):
     reference.add_argument("--type", choices=["seqno", "fields"])
     reference.add_argument("--in-file", type=file_path, required=True)
     reference.add_argument("--out-file", type=str)
-    print(args)
     args = parser.parse_args(args)
-    print(args)
     if args.command == "run":
         mec.run(
             MECIDs=args.mecids,
@@ -62,9 +62,13 @@ def config(filename):
         i = 0
         for config in configs:
             i += 1
-            options += "\n{}:\n{}\n".format(
-                i, "\t" + pformat(config).replace("\n", "\n\t")
-            )
+            if "id" in config:
+                options += "\n{}:\n{}\n".format(i, "\t" + config["id"])
+                del config["id"]
+            else:
+                options += "\n{}:\n{}\n".format(
+                    i, "\t" + pformat(config).replace("\n", "\n\t")
+                )
         print(options + "\n")
         prompt = "Select an option (1-{}):".format(i)
         while True:

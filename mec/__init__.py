@@ -1,14 +1,14 @@
 from .report import Report, InvalidReport
 from .scraper import MECIDScraper, SearchScraper
 from .watcher import ReportWatcher
-from .mecids import *
 
 
 instructions = """PLEASE DO THE FOLLOWING:
 	1. Go to {}
-	2. Click the year {}
-	3. Click the link that says {}
-	4. Download the PDF"""
+	2. Click "Reports"
+	3. Click the year {}
+	4. Click the link that says {}
+	5. Download the PDF"""
 c_fields = [
     "candidate",
     "election",
