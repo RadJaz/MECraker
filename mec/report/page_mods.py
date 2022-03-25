@@ -5,15 +5,17 @@ from .utils import *
 from importlib.resources import files
 
 from . import templates
+
 templatedir = files(templates)
 templates = {}
 
 fitz.Page.get_spans = get_spans
 
 
-
 def _load_template(page):
-    templates[page.type] = json.loads(templatedir.joinpath(page.type + ".json").read_text())
+    templates[page.type] = json.loads(
+        templatedir.joinpath(page.type + ".json").read_text()
+    )
     rectangles, _, _ = sort_drawings(page.get_drawings())
     for box in templates[page.type]:
         if type(templates[page.type][box]["box"]) == int:
