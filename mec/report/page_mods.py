@@ -2,16 +2,18 @@ import fitz
 import json
 import os
 from .utils import *
+from importlib.resources import files
+
+from . import templates
+templatedir = files(templates)
+templates = {}
 
 fitz.Page.get_spans = get_spans
 
-templates = {}
 
 
 def _load_template(page):
-    templatepath = os.path.join("templates", page.type + ".json")
-    with open(templatepath) as f:
-        templates[page.type] = json.load(f)
+    templates[page.type] = json.loads(templatedir.joinpath(page.type + ".json").read_text())
     rectangles, _, _ = sort_drawings(page.get_drawings())
     for box in templates[page.type]:
         if type(templates[page.type][box]["box"]) == int:
