@@ -108,6 +108,7 @@ class Report:
             for page in self["cl"]:
                 for row in "abcde":
                     contribution = {
+                        "committee": self["cover"]["2"],
                         "candidate": self["cover"]["14"].splitlines()[0],
                         "election": self["cover"]["11"],
                         "donor": "",
@@ -141,6 +142,7 @@ class Report:
             for page in self["contributions"]:
                 for row in "abcdefgh":
                     contribution = {
+                        "committee": self["cover"]["2"],
                         "candidate": self["cover"]["14"].splitlines()[0],
                         "election": self["cover"]["11"],
                         "donor": "",
@@ -179,6 +181,7 @@ class Report:
                 for row in range(1, 16):
                     row = str(row)
                     expenditure = {
+                        "committee": self["cover"]["2"],
                         "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
@@ -207,6 +210,7 @@ class Report:
                     if not page[row + "b"]:
                         continue
                     expenditure = {
+                        "committee": self["cover"]["2"],
                         "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
@@ -223,6 +227,7 @@ class Report:
                     if not page["4" + row]:
                         continue
                     expenditure = {
+                        "committee": self["cover"]["2"],
                         "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",
@@ -236,6 +241,7 @@ class Report:
                     expenditures.append(expenditure)
                 for row in "abc":
                     expenditure = {
+                        "committee": self["cover"]["2"],
                         "candidate": self["cover"]["14"].splitlines()[0],
                         "name": "",
                         "address": "",

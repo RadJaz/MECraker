@@ -10,6 +10,7 @@ instructions = """PLEASE DO THE FOLLOWING:
 	4. Click the link that says {}
 	5. Download the PDF"""
 c_fields = [
+    "committee",
     "candidate",
     "election",
     "donor",
@@ -20,7 +21,16 @@ c_fields = [
     "date",
     "agg",
 ]
-e_fields = ["candidate", "name", "address", "date", "purpose", "amount", "paid"]
+e_fields = [
+    "committee",
+    "candidate",
+    "name",
+    "address",
+    "date",
+    "purpose",
+    "amount",
+    "paid",
+]
 
 
 def run(MECIDs, csv_path, watch_path, reports_path):
