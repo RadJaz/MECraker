@@ -1,8 +1,21 @@
+def show_exception_and_exit(xtype, xvalue, tb):
+    import traceback
+
+    traceback.print_exception(xtype, xvalue, tb)
+    input("There was an error. Press enter key to exit.")
+    sys.exit(-1)
+
+
+import sys
+import platform
+
+if platform.system() == "Windows":
+    sys.excepthook = show_exception_and_exit
+
 import mec
 import argparse
 import os
 from pathlib import Path
-import sys
 from yaml import safe_load_all as load_yaml
 from pprint import pformat
 
@@ -16,6 +29,8 @@ def main():
     else:
         args = None
     command(args)
+    if platform.system() == "Windows":
+        input("Program complete. Press enter key to exit.")
 
 
 def command(args=None):
