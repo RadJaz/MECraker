@@ -88,6 +88,7 @@ class MECIDScraper(Scraper):
             self.submit_form(form=form)
             yield year
 
+
 formitems = [
     "ElectionYear",
     "ElectionDate",
@@ -96,6 +97,7 @@ formitems = [
     "PoliticalDistrict",
     "PoliticalSubdivision",
 ]
+
 
 def getcandidates(race):
     scraper = Scraper()

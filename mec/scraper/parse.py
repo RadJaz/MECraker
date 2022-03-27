@@ -2,6 +2,7 @@ def _getbetween(text, str1, str2):
     pos = text.find(str1) + len(str1)
     return text[pos : text.find(str2, pos)]
 
+
 def _inner(text):
     open = 0
     s = ""
@@ -14,6 +15,7 @@ def _inner(text):
             s += char
     text = s.strip()
     return text
+
 
 def getform(text: str) -> dict:
     form = _getbetween(text, "<form", "/form")
