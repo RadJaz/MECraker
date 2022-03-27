@@ -1,6 +1,6 @@
-from .report import Report, InvalidReport
-from .scraper import MECIDScraper, SearchScraper
-from .watcher import ReportWatcher
+from .report import *
+from .scraper import *
+from .watcher import *
 
 
 instructions = """PLEASE DO THE FOLLOWING:
