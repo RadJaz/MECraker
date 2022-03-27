@@ -2,6 +2,18 @@ def _getbetween(text, str1, str2):
     pos = text.find(str1) + len(str1)
     return text[pos : text.find(str2, pos)]
 
+def _inner(text):
+    open = 0
+    s = ""
+    for char in text:
+        if char == "<":
+            open += 1
+        elif char == ">":
+            open -= 1
+        elif not open:
+            s += char
+    text = s.strip()
+    return text
 
 def getform(text: str) -> dict:
     form = _getbetween(text, "<form", "/form")
@@ -63,5 +75,5 @@ def search(text: str) -> list:
                     open -= 1
                 elif not open:
                     s += char
-            table[row][cell] = s.strip()
+            table[row][cell] = _inner(table[row][cell])
     return table
