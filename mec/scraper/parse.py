@@ -66,14 +66,5 @@ def search(text: str) -> list:
     ]
     for row in range(len(table)):
         for cell in range(len(table[row])):
-            open = 0
-            s = ""
-            for char in table[row][cell]:
-                if char == "<":
-                    open += 1
-                elif char == ">":
-                    open -= 1
-                elif not open:
-                    s += char
             table[row][cell] = _inner(table[row][cell])
     return table
