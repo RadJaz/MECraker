@@ -30,6 +30,34 @@ typelookup = {
 del typelookup[""]
 
 
+def blankContribution(report):
+    return {
+        "committee": report["cover"]["2"],
+        "candidate": report["cover"]["14"].splitlines()[0],
+        "election": report["cover"]["11"],
+        "donor": "",
+        "address": "",
+        "employer": "",
+        "title": "",
+        "amount": 0.0,
+        "date": "",
+        "agg": 0.0,
+    }
+
+
+def blankExpenditure(report):
+    return {
+        "committee": report["cover"]["2"],
+        "candidate": report["cover"]["14"].splitlines()[0],
+        "name": "",
+        "address": "",
+        "date": "",
+        "purpose": "",
+        "amount": 0.0,
+        "paid": False,
+    }
+
+
 class Report:
     def __init__(self, doc):
         self.doc = doc
@@ -107,18 +135,7 @@ class Report:
             contributions = []
             for page in self["cl"]:
                 for row in "abcde":
-                    contribution = {
-                        "committee": self["cover"]["2"],
-                        "candidate": self["cover"]["14"].splitlines()[0],
-                        "election": self["cover"]["11"],
-                        "donor": "",
-                        "address": "",
-                        "employer": "",
-                        "title": "",
-                        "amount": 0.0,
-                        "date": "",
-                        "agg": 0.0,
-                    }
+                    contribution = blankContribution(self)
                     col5 = page["5" + row]
                     if not col5:
                         continue
@@ -141,18 +158,7 @@ class Report:
                     contributions.append(contribution)
             for page in self["contributions"]:
                 for row in "abcdefgh":
-                    contribution = {
-                        "committee": self["cover"]["2"],
-                        "candidate": self["cover"]["14"].splitlines()[0],
-                        "election": self["cover"]["11"],
-                        "donor": "",
-                        "address": "",
-                        "employer": "",
-                        "title": "",
-                        "amount": 0.0,
-                        "date": "",
-                        "agg": 0.0,
-                    }
+                    contribution = blankContribution(self)
                     col5 = page["5" + row]
                     if not col5:
                         continue
@@ -180,16 +186,7 @@ class Report:
             for page in self["100+"]:
                 for row in range(1, 16):
                     row = str(row)
-                    expenditure = {
-                        "committee": self["cover"]["2"],
-                        "candidate": self["cover"]["14"].splitlines()[0],
-                        "name": "",
-                        "address": "",
-                        "date": "",
-                        "purpose": "",
-                        "amount": 0.0,
-                        "paid": False,
-                    }
+                    expenditure = blankExpenditure(self)
                     col_d = page[row + "d"]
                     if not col_d:
                         continue
@@ -209,16 +206,7 @@ class Report:
                     row = str(row)
                     if not page[row + "b"]:
                         continue
-                    expenditure = {
-                        "committee": self["cover"]["2"],
-                        "candidate": self["cover"]["14"].splitlines()[0],
-                        "name": "",
-                        "address": "",
-                        "date": "",
-                        "purpose": "",
-                        "amount": 0.0,
-                        "paid": True,
-                    }
+                    expenditure = blankExpenditure(self)
                     expenditure["purpose"] = page[row + "a"]
                     expenditure["amount"] = float(page[row + "b"].replace(",", ""))
                     expenditures.append(expenditure)
@@ -226,30 +214,12 @@ class Report:
                 for row in "ab":
                     if not page["4" + row]:
                         continue
-                    expenditure = {
-                        "committee": self["cover"]["2"],
-                        "candidate": self["cover"]["14"].splitlines()[0],
-                        "name": "",
-                        "address": "",
-                        "date": "",
-                        "purpose": "",
-                        "amount": 0.0,
-                        "paid": True,
-                    }
+                    expenditure = blankExpenditure(self)
                     expenditure["purpose"] = page["3" + row]
                     expenditure["amount"] = float(page["4" + row].replace(",", ""))
                     expenditures.append(expenditure)
                 for row in "abc":
-                    expenditure = {
-                        "committee": self["cover"]["2"],
-                        "candidate": self["cover"]["14"].splitlines()[0],
-                        "name": "",
-                        "address": "",
-                        "date": "",
-                        "purpose": "",
-                        "amount": 0.0,
-                        "paid": True,
-                    }
+                    expenditure = blankExpenditure(self)
                     col11 = page["11" + row]
                     if not col11:
                         continue
