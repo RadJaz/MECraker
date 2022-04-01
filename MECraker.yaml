@@ -62,6 +62,34 @@ mecids:
 # configurations exist in a single file, then the program will ask you to pick
 # one. If only one exists within a file, the program will automatically use it.
 ---
+id: Kansas City Council 2023
+command: run
+# watch-path: null
+csv-path: csvs
+reports-path: reports
+# Instead of listing MECIDs, you can enter the details of a race and the program
+# will find the list of MECIDs for you.
+race:
+  ElectionYear: 2023
+  ElectionDate: 04/04/2023
+  PoliticalOffice: Council Person
+  PoliticalSubdivision: City of Kansas City
+  #PoliticalDistrict: null
+  Status: All
+---
+id: Kansas City Council 2019
+command: run
+# watch-path: null
+csv-path: csvs
+reports-path: reports
+race:
+  ElectionYear: 2019
+  ElectionDate: 04/02/2019
+  PoliticalOffice: Council Person
+  PoliticalSubdivision: City of Kansas City
+  #PoliticalDistrict: null
+  Status: All
+---
 id: Springfield City Council
 command: run
 # watch-path: null

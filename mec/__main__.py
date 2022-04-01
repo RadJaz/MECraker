@@ -98,6 +98,14 @@ def config(filename):
             print("Invalid selection. Try again.")
     args = [config["command"]]
     del config["command"]
+    if "race" in config:
+        print("Looking up candidates...")
+        candidates = scripts.getcandidates(config["race"])
+        print("Done. {} candidates found.".format(len(candidates)))
+        config["mecids"] = [
+            mecid for candidate in candidates.values() for mecid in candidate["mecids"]
+        ]
+        del config["race"]
     for key, value in config.items():
         if value == None:
             continue
