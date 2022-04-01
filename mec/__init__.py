@@ -1,36 +1,15 @@
-from .report import *
-from .scraper import *
-from .watcher import *
+from .report.report import Report, InvalidReport
+from .report.reference import seqno, fields
+from .scraper.scraper import MECIDScraper, SearchScraper, getcandidates
+from .watcher.watcher import ReportWatcher
 
 
 instructions = """PLEASE DO THE FOLLOWING:
-	1. Go to {}
-	2. Click "Reports"
-	3. Click the year {}
-	4. Click the link that says {}
-	5. Download the PDF"""
-c_fields = [
-    "committee",
-    "candidate",
-    "election",
-    "donor",
-    "address",
-    "employer",
-    "title",
-    "amount",
-    "date",
-    "agg",
-]
-e_fields = [
-    "committee",
-    "candidate",
-    "name",
-    "address",
-    "date",
-    "purpose",
-    "amount",
-    "paid",
-]
+    1. Go to {}
+    2. Click "Reports"
+    3. Click the year {}
+    4. Click the link that says {}
+    5. Download the PDF"""
 
 
 def run(MECIDs, csv_path, watch_path, reports_path):
@@ -41,12 +20,10 @@ def run(MECIDs, csv_path, watch_path, reports_path):
         os.makedirs(csv_path)
     c_path = os.path.join(csv_path, ".contributions.tmp")
     e_path = os.path.join(csv_path, ".expenditures.tmp")
-    with open(c_path, "w") as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=c_fields)
-        writer.writeheader()
-    with open(e_path, "w") as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=e_fields)
-        writer.writeheader()
+    if os.path.exists(c_path):
+        os.remove(c_path)
+    if os.path.exists(e_path):
+        os.remove(e_path)
     for MECID in MECIDs:
         lastreport = None
         scraper = MECIDScraper(MECID)
@@ -76,11 +53,27 @@ def run(MECIDs, csv_path, watch_path, reports_path):
                 ]:
                     raise Exception("out of order")
             lastreport = report
+            if not os.path.exists(c_path):
+                with open(c_path, "w") as outfile:
+                    writer = csv.DictWriter(
+                        outfile, fieldnames=report.blankContribution().keys()
+                    )
+                    writer.writeheader()
+            if not os.path.exists(e_path):
+                with open(e_path, "w") as outfile:
+                    writer = csv.DictWriter(
+                        outfile, fieldnames=report.blankExpenditure().keys()
+                    )
+                    writer.writeheader()
             with open(c_path, "a") as outfile:
-                writer = csv.DictWriter(outfile, fieldnames=c_fields)
-                writer.writerows(report.contributions)
+                writer = csv.DictWriter(
+                    outfile, fieldnames=report.blankContribution().keys()
+                )
+                writer.writerows(report.contributions())
             with open(e_path, "a") as outfile:
-                writer = csv.DictWriter(outfile, fieldnames=e_fields)
-                writer.writerows(report.expenditures)
+                writer = csv.DictWriter(
+                    outfile, fieldnames=report.blankExpenditure().keys()
+                )
+                writer.writerows(report.expenditures())
     os.replace(c_path, os.path.join(csv_path, "contributions.csv"))
     os.replace(e_path, os.path.join(csv_path, "expenditures.csv"))
