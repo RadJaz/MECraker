@@ -12,7 +12,7 @@ setup(name='MECraker',
       author='Jaz Hays',
       author_email='emersonjazhays@gmail.com',
       url="https://github.com/RadJaz/MECraker",
-      packages=['mec', 'mec.report', 'mec.scraper', 'mec.watcher', 'mec.report.templates'],
+      packages=['mec', 'mec.scripts', 'mec.report', 'mec.scraper', 'mec.watcher', 'mec.report.templates'],
       package_data={'mec.report.templates': ['*.json']},
       install_requires= ["requests", "PyMuPDF", "PyYAML"]
      )
