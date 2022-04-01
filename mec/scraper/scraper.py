@@ -36,17 +36,15 @@ class SearchScraper(Scraper):
     def active(self):
         self.submit_form(button="Type")
         text = self.submit_form(
-            form={"ddType": "Select+All", "ddStatus": "Active", "btnSearch": "Search"}
+            form={"ddType": "Select All", "ddStatus": "Active", "btnSearch": "Search"}
         )
-        with open("temp.html", "w") as f:
-            f.write(self.text)
         return parse.search(self.text)
 
     def terminated(self):
         self.submit_form(button="Type")
         text = self.submit_form(
             form={
-                "ddType": "Select+All",
+                "ddType": "Select All",
                 "ddStatus": "Terminated",
                 "btnSearch": "Search",
             }

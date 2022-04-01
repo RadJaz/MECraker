@@ -69,4 +69,14 @@ def search(text: str) -> list:
     for row in range(len(table)):
         for cell in range(len(table[row])):
             table[row][cell] = _inner(table[row][cell])
+    for row in range(len(table)):
+        table[row] = {
+            "MECID": table[row][0],
+            "committee": table[row][1],
+            "candidate": table[row][2],
+            "treasurer": table[row][3],
+            "deputy treasurer": table[row][4],
+            "type": table[row][5],
+            "status": table[row][6],
+        }
     return table
