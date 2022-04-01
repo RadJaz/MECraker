@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 from .page_mods import *
 
-reporttypes = [
+_reporttypes = [
     "15 DAYS AFTER CAUCUS NOMINATION",
     "COMMITTEE QUARTERLY REPORT",
     "8 DAYS BEFORE",
@@ -16,7 +16,7 @@ reporttypes = [
     "OTHER",
 ]
 
-typelookup = {
+_typelookup = {
     "": "15 DAYS AFTER CAUCUS NOMINATION",
     "Quarterly Report": "COMMITTEE QUARTERLY REPORT",
     "8 Day Before": "8 DAYS BEFORE",
@@ -27,7 +27,7 @@ typelookup = {
     "": "15 DAYS AFTER PETITION DEADLINE",
     "40 Day Before": "OTHER",
 }
-del typelookup[""]
+del _typelookup[""]
 
 
 class Report:
@@ -200,7 +200,7 @@ class Report:
     def __getattr__(self, attr):
         if attr == "type":
             cover = self["cover"]
-            types = [type for type in reporttypes if cover[type] == True]
+            types = [type for type in _reporttypes if cover[type] == True]
             if "TERMINATION" in types:
                 types.remove("TERMINATION")
             if len(types) == 0:
@@ -262,7 +262,7 @@ class Report:
         date = datetime.strptime(row["date"], "%m/%d/%Y")
         if self.filed != date:
             return False
-        for keyphrase, type in typelookup.items():
+        for keyphrase, type in _typelookup.items():
             if keyphrase in row["name"]:
                 break
             type = "OTHER"

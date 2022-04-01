@@ -1,1 +1,1 @@
-from .scraper import MECIDScraper, SearchScraper, getcandidates
+from .scraper import MECIDScraper, SearchScraper

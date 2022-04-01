@@ -12,7 +12,7 @@ import platform
 if platform.system() == "Windows":
     sys.excepthook = show_exception_and_exit
 
-import mec
+from mec import scripts
 import argparse
 import os
 from pathlib import Path
@@ -46,12 +46,12 @@ def command(args=None):
     run.add_argument("--reports-path", type=str, default="reports")
 
     reference = subparser.add_parser("ref")
-    reference.add_argument("--type", choices=["seqno", "fields"])
+    reference.add_argument("--type", choices=["seqno", "fields"], required=True)
     reference.add_argument("--in-file", type=file_path, required=True)
     reference.add_argument("--out-file", type=str)
     args = parser.parse_args(args)
     if args.command == "run":
-        mec.run(
+        scripts.run(
             MECIDs=args.mecids,
             csv_path=args.csv_path,
             watch_path=args.watch_path,
@@ -61,9 +61,9 @@ def command(args=None):
         if not args.out_file:
             args.out_file = args.type + ".pdf"
         if args.type == "seqno":
-            mec.report.reference.seqno(in_file=args.in_file, out_file=args.out_file)
+            scripts.reference.seqno(in_file=args.in_file, out_file=args.out_file)
         elif args.type == "fields":
-            mec.report.reference.fields(in_file=args.in_file, out_file=args.out_file)
+            scripts.reference.fields(in_file=args.in_file, out_file=args.out_file)
 
 
 def config(filename):

@@ -1,5 +1,5 @@
 import fitz
-from .page_mods import *
+from ..report.page_mods import *
 
 
 def fields(in_file, out_file):
