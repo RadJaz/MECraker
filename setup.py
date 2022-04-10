@@ -14,5 +14,5 @@ setup(name='MECraker',
       url="https://github.com/RadJaz/MECraker",
       packages=['mec', 'mec.scripts', 'mec.report', 'mec.scraper', 'mec.watcher', 'mec.report.templates'],
       package_data={'mec.report.templates': ['*.json']},
-      install_requires= ["requests", "PyMuPDF", "PyYAML"]
+      install_requires= ["requests", "PyMuPDF", "PyYAML", "openpyxl"]
      )

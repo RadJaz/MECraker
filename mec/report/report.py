@@ -3,6 +3,7 @@ import fitz
 import os
 from datetime import datetime, timedelta
 from .page_mods import *
+from openpyxl import Workbook
 
 _reporttypes = [
     "15 DAYS AFTER CAUCUS NOMINATION",
@@ -274,6 +275,25 @@ class Report:
         ):
             return False
         return True
+
+    def to_excel(self, path):
+        wb = Workbook()
+        contrib_sheet = wb.active
+        contrib_sheet.title = "Contributions"
+        header = ["donor", "address", "employer", "title", "amount", "date", "agg"]
+        contrib_sheet.append(header)
+        header = {k: v + 1 for v, k in enumerate(header)}
+        for row in self.contributions():
+            row = {header[k]: v for k, v in row.items() if k in header}
+            contrib_sheet.append(row)
+        expend_sheet = wb.create_sheet(title="Expenditures")
+        header = ["name", "address", "date", "purpose", "amount", "paid"]
+        expend_sheet.append(header)
+        header = {k: v + 1 for v, k in enumerate(header)}
+        for row in self.expenditures():
+            row = {header[k]: v for k, v in row.items() if k in header}
+            expend_sheet.append(row)
+        wb.save(path)
 
 
 class InvalidReport(Exception):
