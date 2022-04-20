@@ -286,6 +286,7 @@ class Report:
         for row in self.contributions():
             row = {header[k]: v for k, v in row.items() if k in header}
             contrib_sheet.append(row)
+        contrib_sheet.auto_filter.ref = contrib_sheet.dimensions
         expend_sheet = wb.create_sheet(title="Expenditures")
         header = ["name", "address", "date", "purpose", "amount", "paid"]
         expend_sheet.append(header)
@@ -293,6 +294,7 @@ class Report:
         for row in self.expenditures():
             row = {header[k]: v for k, v in row.items() if k in header}
             expend_sheet.append(row)
+        expend_sheet.auto_filter.ref = expend_sheet.dimensions
         wb.save(path)
 
 
