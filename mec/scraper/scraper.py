@@ -4,18 +4,13 @@ from datetime import date, datetime
 import time
 
 
-_CommInfo = "https://mec.mo.gov/mec/Campaign_Finance/CommInfo.aspx"
-_CFSearch = "https://mec.mo.gov/mec/Campaign_Finance/CFSearch.aspx"
-
-
-_prefix = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$"
-
-
 class Scraper:
+    prefix = "ctl00$ctl00$ContentPlaceHolder$ContentPlaceHolder1$"
+
     def submit_form(self, button="", form={}):
-        form = {_prefix + k.replace(_prefix, ""): v for k, v in form.items()}
+        form = {self.prefix + k.replace(self.prefix, ""): v for k, v in form.items()}
         if button:
-            form["__EVENTTARGET"] = _prefix + "lbtn" + button
+            form["__EVENTTARGET"] = self.prefix + "lbtn" + button
         form = self.form | form
         self.text = _downloader.post(self.url, data=form).text
         self.form = parse.getform(self.text)
@@ -29,8 +24,9 @@ class Scraper:
 
 
 class SearchScraper(Scraper):
+    url = "https://mec.mo.gov/mec/Campaign_Finance/CFSearch.aspx"
+
     def __init__(self):
-        self.url = _CFSearch
         self.form
 
     def active(self):
@@ -56,8 +52,10 @@ class SearchScraper(Scraper):
 
 
 class MECIDScraper(Scraper):
+    url = "https://mec.mo.gov/mec/Campaign_Finance/CommInfo.aspx"
+
     def __init__(self, mecid):
-        self.url = "{}?MECID={}".format(_CommInfo, mecid)
+        self.url = "{}?MECID={}".format(self.url, mecid)
 
     def __iter__(self):
         self.submit_form(button="Reports")
